@@ -52,6 +52,7 @@ import org.jenetics.RouletteWheelSelector;
 import org.jenetics.Selector;
 import org.jenetics.SinglePointCrossover;
 import org.jenetics.StochasticUniversalSelector;
+
 import org.jenetics.SwapMutator;
 import org.jenetics.TournamentSelector;
 import org.jenetics.TruncationSelector;
@@ -108,23 +109,23 @@ public class Algoritmo {
                 con.crearConexion("root","");
                 final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro);
 		ResultSet rs=con.ejecutarSQLSelect("select * from configuraciones");
-                while(rs.next()){
-                // Configure and build the evolution engine.
-		final Engine<IntegerGene, Double> engine;
-                    engine = Engine
+                if(rs.next()){
+                    ResultSet rs2=con.ejecutarSQLSelect("select distinct(idConfiguracionAlteradores) from alteradores order by idConfiguracionAlteradores");
+                    while(rs2.next()){
+                        Integer idAlteradores=rs2.getInt("idConfiguracionAlteradores");
+                        // Configure and build the evolution engine.    
+                        final Engine<IntegerGene, Double> engine;
+                        engine = Engine
                             .builder(ff, Genotype.of(IntegerChromosome.of(0, investigadores.size()-1),cantidad))
                             .populationSize(rs.getInt("population"))
                             .survivorsSelector(getSelector(rs.getString("survivorselector"),rs.getString("survivorparam")))
                             .offspringSelector(getSelector(rs.getString("offspringselector"),rs.getString("offspringparam")))
-                            .alterers(
-                                    getAlterer1(rs.getInt("id"),con), getListOfAlterers(rs.getInt("id"), con))
+                            .alterers(getAlterer1(idAlteradores,con), getListOfAlterers(idAlteradores, con))
                             .build();
-
-		// Create evolution statistics consumer.
-		final EvolutionStatistics<Double, ?>
+                        //Create evolution statistics consumer.
+                        final EvolutionStatistics<Double, ?>
 			statistics = EvolutionStatistics.ofNumber();
-
-		final Phenotype<IntegerGene, Double> best = engine.stream()
+        		final Phenotype<IntegerGene, Double> best = engine.stream()
 			// Truncate the evolution stream after 7 "steady"
 			// generations.
 			.limit(getPredicate(rs.getString("limitador"),rs.getString("paramLimitador")))
@@ -137,10 +138,10 @@ public class Algoritmo {
 			// Collect (reduce) the evolution stream to
 			// its best phenotype.
 			.collect(toBestPhenotype());
-                System.out.println("Best: "+best);
-                con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"')");
+                        con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+")");
+                    }
                 }
-	}
+            }
         
         public void llamadoEstatico(Vector<Investigador> investigadores,Driver driver,String filtro,int cantidad){
                             //final int nitems = 15;
@@ -179,18 +180,15 @@ public class Algoritmo {
 			// its best phenotype.
 			.collect(toBestPhenotype());
 
-		System.out.println(statistics);
-		System.out.println("Best: "+best);
+		
         }
 
         
     private Alterer<IntegerGene,Double> getAlterer1(int idConfig, ConexionMySQL con){
-       String sql="select * from alteradores where idConfiguracion="+idConfig+" order by id";
-        System.out.println(sql);
-        ResultSet rs=con.ejecutarSQLSelect(sql);
+       String sql="select * from alteradores where idConfiguracionAlteradores="+idConfig+" order by id";
+       ResultSet rs=con.ejecutarSQLSelect(sql);
             try {
                 if(rs.next()){
-                   System.out.println(rs.getString("tipo")+","+rs.getDouble("probabilidad")+","+rs.getInt("orden"));
                     return getAlterer(rs.getString("tipo"),rs.getDouble("probabilidad"),rs.getInt("orden"));
                 } else return null;
             } catch (SQLException ex) {
@@ -202,8 +200,7 @@ public class Algoritmo {
     private Alterer<IntegerGene, Double>[] getListOfAlterers(int idConfig, ConexionMySQL con) {
         Alterer<IntegerGene, Double>[] resultado;
         resultado = new Alterer[getCantidadAlteradores(idConfig, con)];
-        String sql="select * from alteradores where idConfiguracion="+idConfig+" order by id";
-        System.out.println(sql);
+        String sql="select * from alteradores where idConfiguracionAlteradores="+idConfig+" order by id";
         int i=0;
         ResultSet rs=con.ejecutarSQLSelect(sql);
             try {
@@ -273,6 +270,7 @@ public class Algoritmo {
                 return new SinglePointCrossover(probabilidad); 
             else if(tipo.equalsIgnoreCase("SinglePointCrossover"))
                 return new SwapMutator(probabilidad); 
+       
         }else{
             if(tipo.equalsIgnoreCase("GaussianMutator"))
                 return new GaussianMutator();
@@ -291,7 +289,7 @@ public class Algoritmo {
     }
 
     private int getCantidadAlteradores(int idConfig, ConexionMySQL con) {
-       ResultSet rs= con.ejecutarSQLSelect("select count(*) as cantidad from alteradores where idConfiguracion="+idConfig);
+       ResultSet rs= con.ejecutarSQLSelect("select count(*) as cantidad from alteradores where idConfiguracionAlteradores="+idConfig);
             try {
                 if(rs.next())
                     return (rs.getInt("cantidad")-1);

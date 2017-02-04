@@ -51,6 +51,7 @@ public Double apply(final Genotype<IntegerGene> gt) {
                 System.out.println("Factores:");
                 Iterator<Chromosome<IntegerGene>> ite1=gt.iterator();
                 int index1=0;
+                int divisor=0;
                 while(ite1.hasNext()){
                     Integer val2=-1;
                     Iterator<Chromosome<IntegerGene>> ite2=gt.iterator();
@@ -67,8 +68,8 @@ public Double apply(final Genotype<IntegerGene> gt) {
                                 StatementResult result= session.run("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-["+filtro+"*0..]-(to)) WHERE id(from) = "+investigadores.get(val).getId()+" AND id(to) ="+investigadores.get(val2).getId()+"  RETURN length(path) AS distancia ");
                                 if (result.hasNext() ){
                                  Record record=result.next();
-                                 System.out.println(Integer.valueOf(record.asMap().get("distancia").toString())); 
                                  sum=sum+ Integer.valueOf(record.asMap().get("distancia").toString());
+                                 divisor=divisor+1;
                             }
                             }
                            
@@ -77,9 +78,9 @@ public Double apply(final Genotype<IntegerGene> gt) {
                             index1++;  
                     } 
                 
-                System.out.println("resultado: "+sum+". ");
+                //System.out.println("resultado: "+sum+". ");
                 session.close();
-                return sum;
+                return sum/divisor;
 	}
 
     
