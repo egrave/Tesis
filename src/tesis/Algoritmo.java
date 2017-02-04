@@ -108,18 +108,20 @@ public class Algoritmo {
                 ConexionMySQL con= new ConexionMySQL();
                 con.crearConexion("root","");
                 final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro);
-		ResultSet rs=con.ejecutarSQLSelect("select * from configuraciones");
-                if(rs.next()){
+		ResultSet rs=con.ejecutarSQLSelect("select * from configuraciones where id>3");
+                while(rs.next()){
                     ResultSet rs2=con.ejecutarSQLSelect("select distinct(idConfiguracionAlteradores) from alteradores order by idConfiguracionAlteradores");
                     while(rs2.next()){
                         Integer idAlteradores=rs2.getInt("idConfiguracionAlteradores");
+                        String survivorparam=rs.getString("survivorparam");
+                        String offspringparam=rs.getString("offspringparam");
                         // Configure and build the evolution engine.    
                         final Engine<IntegerGene, Double> engine;
                         engine = Engine
                             .builder(ff, Genotype.of(IntegerChromosome.of(0, investigadores.size()-1),cantidad))
                             .populationSize(rs.getInt("population"))
-                            .survivorsSelector(getSelector(rs.getString("survivorselector"),rs.getString("survivorparam")))
-                            .offspringSelector(getSelector(rs.getString("offspringselector"),rs.getString("offspringparam")))
+                            .survivorsSelector(getSelector(rs.getString("survivorselector"),survivorparam))
+                            .offspringSelector(getSelector(rs.getString("offspringselector"),offspringparam))
                             .alterers(getAlterer1(idAlteradores,con), getListOfAlterers(idAlteradores, con))
                             .build();
                         //Create evolution statistics consumer.
@@ -220,7 +222,7 @@ public class Algoritmo {
                 return (Alterer<IntegerGene, Double>[]) resultado;
     }    
     private Selector<IntegerGene, Double> getSelector(String tipo, String parametro) {
-        if(parametro!=null){
+        if(parametro!=null &&!parametro.equals("")){
         if(tipo.equalsIgnoreCase("BoltzmannSelector"))
             return new BoltzmannSelector(Double.valueOf(parametro));
         else if (tipo.equalsIgnoreCase("ExponentialRankSelector"))
