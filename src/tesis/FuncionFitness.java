@@ -48,7 +48,6 @@ public Double apply(final Genotype<IntegerGene> gt) {
                 Double sum=0.0;
                 int iteraciones=0;
                 int invAnterior=-1;
-                System.out.println("Factores:");
                 Iterator<Chromosome<IntegerGene>> ite1=gt.iterator();
                 int index1=0;
                 int divisor=0;

@@ -389,7 +389,14 @@ public class ventanaInicio extends javax.swing.JFrame {
        if(checkboxgexf.getState())
         generarArchivoDibujo(textoXML, session, n, filtro);
        try {
-                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad);
+                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,119,150);
+                 Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,150,170);
+                  Algoritmo c= new Algoritmo(vector,driver,crearFiltro(),cantidad,170,190);
+                   Algoritmo d= new Algoritmo(vector,driver,crearFiltro(),cantidad,190,220);
+                   a.start();
+                    b.start();
+                     c.start();
+                      d.start();
             } catch (SQLException ex) {
                 Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
             }
