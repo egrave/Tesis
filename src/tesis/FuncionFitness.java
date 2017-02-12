@@ -28,15 +28,16 @@ class FuncionFitness implements Function<Genotype<IntegerGene>, Double>{
 	private final Vector<Investigador>investigadores;
         private Driver driver;
         private String filtro;
+        private Integer diametro;
       
     
 	
 
-	public FuncionFitness(final Vector<Investigador> investigadores,Driver driver,String filtro) {
+	public FuncionFitness(final Vector<Investigador> investigadores,Driver driver,String filtro,Integer diametro) {
 		this.investigadores = investigadores;
                 this.driver=driver;
                 this.filtro=filtro;
-               
+                this.diametro=diametro;
 	}
 @Override
 public Double apply(final Genotype<IntegerGene> gt) {
@@ -45,6 +46,7 @@ public Double apply(final Genotype<IntegerGene> gt) {
                 //Aca tendria que calcular la distancia, por ahora devuelvo el id nomas
                 Session session = driver.session();
                 Gson gson = new Gson();
+                int distanciaMinima=diametro;
                 Double sum=0.0;
                 int iteraciones=0;
                 int invAnterior=-1;
@@ -63,13 +65,17 @@ public Double apply(final Genotype<IntegerGene> gt) {
                        }
                         if(index2>index1){
                             while(ite2.hasNext()){
+                                int distancia=10;
                                 val2=ite2.next().getGene().intValue();
                                 StatementResult result= session.run("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-["+filtro+"*0..]-(to)) WHERE id(from) = "+investigadores.get(val).getId()+" AND id(to) ="+investigadores.get(val2).getId()+"  RETURN length(path) AS distancia ");
                                 if (result.hasNext() ){
                                  Record record=result.next();
-                                 sum=sum+ Integer.valueOf(record.asMap().get("distancia").toString());
-                                 divisor=divisor+1;
-                            }
+                                 distancia=Integer.valueOf(record.asMap().get("distancia").toString());
+                                }
+                                sum=sum+ distancia;
+                                divisor=divisor+1;
+                                if(distancia<distanciaMinima)
+                                     distanciaMinima=distancia;
                             }
                            
                             
@@ -79,7 +85,7 @@ public Double apply(final Genotype<IntegerGene> gt) {
                 
                 //System.out.println("resultado: "+sum+". ");
                 session.close();
-                return sum/divisor;
+                return (sum/divisor+distanciaMinima)/(2*diametro);
 	}
 
     

@@ -120,12 +120,12 @@ public class Algoritmo extends Thread{
         
     public void run(){
         ConexionMySQL con= new ConexionMySQL();
-        con.crearConexion("root","1234");
-        final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro);
+        con.crearConexion("root","");
+        final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro,8);
 	ResultSet rs=con.ejecutarSQLSelect("select * from configuraciones where id>="+idConfiguracionInicio+" and id<"+idCongiguracionFin);
             try {
                 while(rs.next()){
-                    ResultSet rs2=con.ejecutarSQLSelect("select distinct(idConfiguracionAlteradores) from alteradores order by idConfiguracionAlteradores");
+                    ResultSet rs2=con.ejecutarSQLSelect("select distinct(idConfiguracionAlteradores) from alteradores  order by idConfiguracionAlteradores");
                     while(rs2.next()){
                         Integer idAlteradores=rs2.getInt("idConfiguracionAlteradores");
                         String survivorparam=rs.getString("survivorparam");
@@ -155,10 +155,12 @@ public class Algoritmo extends Thread{
                                 // Collect (reduce) the evolution stream to
                                 // its best phenotype.
                                 .collect(toBestPhenotype());
-                        con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+")");
+                        
+                        con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+","+cantidad+",'"+filtro+"',"+statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean()+","+statistics.getEvolveDuration().getMean()+")");
                     }
                 }
             } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
                 Logger.getLogger(Algoritmo.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
@@ -167,10 +169,10 @@ public class Algoritmo extends Thread{
         public void llamadoEstatico(Vector<Investigador> investigadores,Driver driver,String filtro,int cantidad){
                             //final int nitems = 15;
 		//final double kssize = nitems*100.0/3.0;
-                //Miembro.setInvestigadores(investigadores);
+                //Miembro.setInvestigadores(inves,tigadores);
 
 		//final FuncionFitness ff = new FuncionFitness(Stream.generate(Miembro::random).limit(nitems).toArray(Miembro[]::new));
-                final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro);
+                final FuncionFitness ff = new FuncionFitness(investigadores,driver,filtro,8);
 
 		// Configure and build the evolution engine.
 		final Engine<IntegerGene, Double> engine = Engine
