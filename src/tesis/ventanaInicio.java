@@ -386,20 +386,21 @@ public class ventanaInicio extends javax.swing.JFrame {
         vector.add(i);
         n=n+1;
        }
+       String filtroRelacion=crearFiltro();
        if(checkboxgexf.getState())
-        generarArchivoDibujo(textoXML, session, n, filtro);
+        generarArchivoDibujo(textoXML, session, n, filtro,filtroRelacion);
        try {
-                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,1044,1054);
-                 Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,1054,1064);
-                  Algoritmo c= new Algoritmo(vector,driver,crearFiltro(),cantidad,1064,1074);
-                   Algoritmo d= new Algoritmo(vector,driver,crearFiltro(),cantidad,1074,1084);
-                   Algoritmo e= new Algoritmo(vector,driver,crearFiltro(),cantidad,1084,1100);
-                   
+                Algoritmo a= new Algoritmo(vector,driver,filtroRelacion,cantidad,1,100);
+                /* Algoritmo b=new Algoritmo(vector,driver,filtroRelacion,cantidad,1054,1064);
+                  Algoritmo c= new Algoritmo(vector,driver,filtroRelacion,cantidad,1064,1074);
+                   Algoritmo d= new Algoritmo(vector,driver,filtroRelacion,cantidad,1074,1084);
+                   Algoritmo e= new Algoritmo(vector,driver,filtroRelacion,cantidad,1084,1100);
+                   */
                    a.start();
-                    b.start();
+                    /*b.start();
                      c.start();
                       d.start();
-                      e.start();
+                      e.start();*/
                    
             } catch (SQLException ex) {
                 Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
@@ -407,67 +408,74 @@ public class ventanaInicio extends javax.swing.JFrame {
      }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    public void generarArchivoDibujo(String investigadores,org.neo4j.ogm.session.Session session,int cantInv,String filtro){
+    public void generarArchivoDibujo(String investigadores,org.neo4j.ogm.session.Session session,int cantInv,String filtro,String filtroRelacion){
        String textoXML=investigadores;
        int n=cantInv;
-       String consulta="MATCH (n:disciplina) return n";
-      System.out.println(consulta);
-      session.clear();
-       Iterable<Disciplina> iterableDis=session.query(Disciplina.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Disciplina> iteradorDis=iterableDis.iterator();
-       while(iteradorDis.hasNext()){
-        Disciplina d=iteradorDis.next();
-        textoXML=textoXML+"<node id=\""+d.getId()+ "\" label=\""+d.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+       String consulta="";
+      if(filtroRelacion.contains("tienecomodisciplina") || filtroRelacion.equals("")){
+         consulta="MATCH (n:disciplina) return n";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Disciplina> iterableDis=session.query(Disciplina.class,consulta,Collections.<String, Object> emptyMap());
+        Iterator<Disciplina> iteradorDis=iterableDis.iterator();
+        while(iteradorDis.hasNext()){
+            Disciplina d=iteradorDis.next();
+            textoXML=textoXML+"<node id=\""+d.getId()+ "\" label=\""+d.getNombre()+"\"/> \n";
+            n=n+1;
         }
-          consulta="MATCH (n:institucion) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Institucion> iterableIns=session.query(Institucion.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Institucion> iteradorIns=iterableIns.iterator();
-       while(iteradorIns.hasNext()){
-        Institucion i=iteradorIns.next();
-        textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre().replaceAll("\"", "")+"\"/> \n";
-         n=n+1;
-                   
+      }
+      if(filtroRelacion.contains("trabajaen") || filtroRelacion.equals("")){
+        consulta="MATCH (n:institucion) return n";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Institucion> iterableIns=session.query(Institucion.class,consulta,Collections.<String, Object> emptyMap());
+        Iterator<Institucion> iteradorIns=iterableIns.iterator();
+        while(iteradorIns.hasNext()){
+            Institucion i=iteradorIns.next();
+            textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre().replaceAll("\"", "")+"\"/> \n";
+             n=n+1;
         }
+      } 
+      
+      if(filtroRelacion.contains("edad") || filtroRelacion.equals("")){
+        consulta="MATCH (n:rangoetario) return n";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Rangoetario> iterableRE=session.query(Rangoetario.class,consulta,Collections.<String, Object> emptyMap());
+        Iterator<Rangoetario> iteradorRE=iterableRE.iterator();
+        while(iteradorRE.hasNext()){
+            Rangoetario re=iteradorRE.next();
+            textoXML=textoXML+"<node id=\""+re.getId()+ "\" label=\""+re.getNombre()+"\"/> \n";
+            n=n+1;
+        }
+      }
        
-       consulta="MATCH (n:rangoetario) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Rangoetario> iterableRE=session.query(Rangoetario.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Rangoetario> iteradorRE=iterableRE.iterator();
-       while(iteradorRE.hasNext()){
-        Rangoetario re=iteradorRE.next();
-        textoXML=textoXML+"<node id=\""+re.getId()+ "\" label=\""+re.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+      
+      if(filtroRelacion.contains("nacionalidad") || filtroRelacion.equals("")){  
+        consulta="MATCH (n:pais) return n";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Pais> iterablePais=session.query(Pais.class,consulta,Collections.<String, Object> emptyMap());
+        Iterator<Pais> iteradorPais=iterablePais.iterator();
+        while(iteradorPais.hasNext()){
+            Pais p=iteradorPais.next();
+            textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
+            n=n+1;
         }
-        
-       consulta="MATCH (n:pais) return n";
-      System.out.println(consulta);
-     session.clear();
-            Iterable<Pais> iterablePais=session.query(Pais.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Pais> iteradorPais=iterablePais.iterator();
-       while(iteradorPais.hasNext()){
-        Pais p=iteradorPais.next();
-        textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+      }
+      
+      if(filtroRelacion.contains("resideen") || filtroRelacion.equals("")){
+        consulta="MATCH (n:provincia) return n";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Provincia> iterableProv=session.query(Provincia.class,consulta,Collections.<String, Object> emptyMap());
+        Iterator<Provincia> iteradorProv=iterableProv.iterator();
+        while(iteradorProv.hasNext()){
+            Provincia p=iteradorProv.next();
+            textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
+            n=n+1;
         }
-       
-         consulta="MATCH (n:provincia) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Provincia> iterableProv=session.query(Provincia.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Provincia> iteradorProv=iterableProv.iterator();
-       while(iteradorProv.hasNext()){
-        Provincia p=iteradorProv.next();
-        textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
-         n=n+1;
-                   
-        }
+      }
       
      String textoxmlEnlaces="";
      int x=0;
