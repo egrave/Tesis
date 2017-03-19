@@ -389,11 +389,11 @@ public class ventanaInicio extends javax.swing.JFrame {
        if(checkboxgexf.getState())
         generarArchivoDibujo(textoXML, session, n, filtro);
        try {
-                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,1044,1054);
-                 Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,1054,1064);
-                  Algoritmo c= new Algoritmo(vector,driver,crearFiltro(),cantidad,1064,1074);
-                   Algoritmo d= new Algoritmo(vector,driver,crearFiltro(),cantidad,1074,1084);
-                   Algoritmo e= new Algoritmo(vector,driver,crearFiltro(),cantidad,1084,1100);
+                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,1044,1110);
+                 Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,1110,1170);
+                  Algoritmo c= new Algoritmo(vector,driver,crearFiltro(),cantidad,1170,1235);
+                   Algoritmo d= new Algoritmo(vector,driver,crearFiltro(),cantidad,1235,1300);
+                   Algoritmo e= new Algoritmo(vector,driver,crearFiltro(),cantidad,1300,1367);
                    
                    a.start();
                     b.start();

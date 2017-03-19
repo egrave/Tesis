@@ -127,22 +127,24 @@ public class Algoritmo extends Thread{
                 while(rs.next()){
                     ResultSet rs2=con.ejecutarSQLSelect("select distinct(idConfiguracionAlteradores) from alteradores  order by idConfiguracionAlteradores");
                     while(rs2.next()){
-                        Integer idAlteradores=rs2.getInt("idConfiguracionAlteradores");
-                        String survivorparam=rs.getString("survivorparam");
-                        String offspringparam=rs.getString("offspringparam");
-                        // Configure and build the evolution engine.    
-                        final Engine<IntegerGene, Double> engine;
-                        engine = Engine
+                       ResultSet existeConfiguracion=con.ejecutarSQLSelect("select * from salida where idconfiguracion="+rs.getString("id")+" and idConfiguracionAlteradores="+rs2.getString("idConfiguracionAlteradores"));
+                        if(!existeConfiguracion.next()){
+                           Integer idAlteradores=rs2.getInt("idConfiguracionAlteradores");
+                            String survivorparam=rs.getString("survivorparam");
+                            String offspringparam=rs.getString("offspringparam");
+                            // Configure and build the evolution engine.    
+                            final Engine<IntegerGene, Double> engine;
+                            engine = Engine
                                 .builder(ff, Genotype.of(IntegerChromosome.of(0, investigadores.size()-1),cantidad))
                                 .populationSize(rs.getInt("population"))
                                 .survivorsSelector(getSelector(rs.getString("survivorselector"),survivorparam))
                                 .offspringSelector(getSelector(rs.getString("offspringselector"),offspringparam))
                                 .alterers(getAlterer1(idAlteradores,con), getListOfAlterers(idAlteradores, con))
                                 .build();
-                        //Create evolution statistics consumer.
-                        final EvolutionStatistics<Double, ?>
+                            //Create evolution statistics consumer.
+                            final EvolutionStatistics<Double, ?>
                                 statistics = EvolutionStatistics.ofNumber();
-                        final Phenotype<IntegerGene, Double> best = engine.stream()
+                            final Phenotype<IntegerGene, Double> best = engine.stream()
                                 // Truncate the evolution stream after 7 "steady"
                                 // generations.
                                 .limit(getPredicate(rs.getString("limitador"),rs.getString("paramLimitador")))
@@ -156,7 +158,8 @@ public class Algoritmo extends Thread{
                                 // its best phenotype.
                                 .collect(toBestPhenotype());
                         
-                        con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+","+cantidad+",'"+filtro+"',"+statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean()+","+statistics.getEvolveDuration().getMean()+")");
+                            con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+","+cantidad+",'"+filtro+"',"+statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean()+","+statistics.getEvolveDuration().getMean()+")");
+                        }
                     }
                 }
             } catch (SQLException ex) {
