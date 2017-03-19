@@ -354,7 +354,7 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .query( "match m:investigador" )
                 .stream());  
         session.close();
-        driver.close();*/
+        driver.close();*/ 
        Integer cantidad=0;
        try{
         cantidad=Integer.valueOf(jTextCantidad.getText());
@@ -382,30 +382,31 @@ public class ventanaInicio extends javax.swing.JFrame {
        Vector<Investigador> vector= new Vector<Investigador>();
        while(iteradorInv.hasNext()){
         Investigador i=iteradorInv.next();
-        textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre()+" "+i.getApellido()+"\"/> \n";
+        //textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre()+" "+i.getApellido()+"\"/> \n";
+        //System.out.println("vector.add(new Investigador(\"" + i.getNombre() + "\", \""+ i.getTipoInstitucionTrabajo()+ "\", \"" + i.getInstitucionDeTrabajoEscape()+"\", \""+ i.getCuitOPasaporte()+"\", \""+ i.getSexo() + "\", \"" + i.getDisciplinaActuacion() +"\", \""+ i.getProvinciaResidencia() +"\", \""+ i.getRangoEtario() + "\", \""+ i.getMaximoNivelEducativo() +"\", \""+ i.getRangoDeActualizacionCV() +"\", \""+i.getNacionalidad()+"\", \""+ i.getProvinciaLugarDeTrabajo() +"\", \""+ i.getApellido() +"\", \""+i.getIdentificador()+"\", \"" +i.getGranAreaActuacion() +"\") );");
         vector.add(i);
         n=n+1;
        }
        String filtroRelacion=crearFiltro();
-       if(checkboxgexf.getState())
+/*       if(checkboxgexf.getState())
         generarArchivoDibujo(textoXML, session, n, filtro,filtroRelacion);
        try {
-                Algoritmo a= new Algoritmo(vector,driver,filtroRelacion,cantidad,1,100);
-                /* Algoritmo b=new Algoritmo(vector,driver,filtroRelacion,cantidad,1054,1064);
-                  Algoritmo c= new Algoritmo(vector,driver,filtroRelacion,cantidad,1064,1074);
-                   Algoritmo d= new Algoritmo(vector,driver,filtroRelacion,cantidad,1074,1084);
-                   Algoritmo e= new Algoritmo(vector,driver,filtroRelacion,cantidad,1084,1100);
-                   */
+                Algoritmo a= new Algoritmo(vector,driver,filtroRelacion,cantidad,1,2);
                    a.start();
-                    /*b.start();
-                     c.start();
-                      d.start();
-                      e.start();*/
-                   
             } catch (SQLException ex) {
                 Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-     }
+            }*/
+        
+        Tareas tareas = new Tareas();
+
+         for (int i = 1; i <= 1 ; i++)             
+            tareas.Put(new Tarea(filtroRelacion, 5, driver, vector, 30, "TournamentSelector", "6", "TournamentSelector", "9", 1000, "bySteadyFitness", "100", "Mutator", 0.25, null));
+        
+            int cantidadthreads = 3;
+            for (int i = 1; i <= cantidadthreads; i++) {
+                new AlgoritmoGenetico(tareas).start();
+            };
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     public void generarArchivoDibujo(String investigadores,org.neo4j.ogm.session.Session session,int cantInv,String filtro,String filtroRelacion){

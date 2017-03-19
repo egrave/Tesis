@@ -31,7 +31,25 @@ public class Investigador extends Entity{
     String Apellido;
     String Identificador;
     String GranAreaActuacion;
-  
+
+    public Investigador(String Nombre, String TipoInstitucionTrabajo, String InstitucionDeTrabajo, String CuitOPasaporte, String Sexo, String DisciplinaActuacion, String ProvinciaResidencia, String RangoEtario, String MaximoNivelEducativo, String RangoDeActualizacionCV, String Nacionalidad, String ProvinciaLugarDeTrabajo, String Apellido, String Identificador, String GranAreaActuacion) {
+        this.Nombre = Nombre;
+        this.TipoInstitucionTrabajo = TipoInstitucionTrabajo;
+        this.InstitucionDeTrabajo = InstitucionDeTrabajo;
+        this.CuitOPasaporte = CuitOPasaporte;
+        this.Sexo = Sexo;
+        this.DisciplinaActuacion = DisciplinaActuacion;
+        this.ProvinciaResidencia = ProvinciaResidencia;
+        this.RangoEtario = RangoEtario;
+        this.MaximoNivelEducativo = MaximoNivelEducativo;
+        this.RangoDeActualizacionCV = RangoDeActualizacionCV;
+        this.Nacionalidad = Nacionalidad;
+        this.ProvinciaLugarDeTrabajo = ProvinciaLugarDeTrabajo;
+        this.Apellido = Apellido;
+        this.Identificador = Identificador;
+        this.GranAreaActuacion = GranAreaActuacion;
+    }
+
     public Investigador() {
     }
 
@@ -155,5 +173,19 @@ public class Investigador extends Entity{
         this.GranAreaActuacion = GranAreaActuacion;
     }
 
+    
+    public String getInstitucionDeTrabajoEscape() {
+        if (InstitucionDeTrabajo != null) {
+        String aux = InstitucionDeTrabajo;
+        char [] auxchar = aux.toCharArray();
+        for(int i = 0; i<aux.length(); i++)
+            if (auxchar[i] == '\"'){
+            auxchar[i] = '\'';
+            }
+        aux = String.valueOf(auxchar);
+        return aux;
+    }
+        return null;
+    }
     
 }
