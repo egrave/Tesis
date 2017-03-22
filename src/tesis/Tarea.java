@@ -6,6 +6,7 @@
 package tesis;
 
 import POJO.Investigador;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.function.Predicate;
 import org.jenetics.Alterer;
@@ -36,7 +37,8 @@ import org.neo4j.driver.v1.Driver;
  * @author Leo
  */
 public class Tarea {
-
+    private int id;
+    private int idAlteradores;
     private final int diametroRed = 8;
     private String filtroRelacion;
     private int cantidad;
@@ -53,12 +55,13 @@ public class Tarea {
     private String limitador;
     private String paramLimitador;
 
-    //Alteradores
-    private String tipoAlterador;
-    private Double probabilidad;
-    private Integer orden;
+//Alteradores
+    Alterer<IntegerGene, Double> alterador;
+    ArrayList<Alterer<IntegerGene, Double>> alteradoresAdicionales;
 
-    public Tarea(String filtroRelacion, int cantidad, Driver driver, Vector<Investigador> investigadores, int population, String survivorselector, String survivorparam, String offspringselector, String offspringparam, long maxCorridas, String limitador, String paramLimitador, String tipoAlterador, Double probabilidad, Integer orden) {
+    public Tarea(int id, int idAlteradores, String filtroRelacion, int cantidad, Driver driver, Vector<Investigador> investigadores, int population, String survivorselector, String survivorparam, String offspringselector, String offspringparam, long maxCorridas, String limitador, String paramLimitador, String tipoAlterador, Double probabilidad, Integer orden) {
+        this.id = id;
+        this.idAlteradores = idAlteradores;
         this.filtroRelacion = filtroRelacion;
         this.cantidad = cantidad;
         this.driver = driver;
@@ -71,9 +74,26 @@ public class Tarea {
         this.maxCorridas = maxCorridas;
         this.limitador = limitador;
         this.paramLimitador = paramLimitador;
-        this.tipoAlterador = tipoAlterador;
-        this.probabilidad = probabilidad;
-        this.orden = orden;
+        //Alteradores
+        alterador = this.getAlterer(tipoAlterador, probabilidad, orden);
+        alteradoresAdicionales = new ArrayList<Alterer<IntegerGene, Double>>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getIdAlteradores() {
+        return idAlteradores;
+    }
+
+    public void AddAlterador(String tipoAlterador, Double probabilidad, Integer orden) {
+        alteradoresAdicionales.add(this.getAlterer(tipoAlterador, probabilidad, orden));
+    }
+
+    public Alterer<IntegerGene, Double>[] GetAlteradoresAdicionales() {
+        Alterer<IntegerGene, Double>[] array = new Alterer[alteradoresAdicionales.size()];
+        return alteradoresAdicionales.toArray(array);
     }
 
     public Vector<Investigador> getInvestigadores() {
@@ -126,18 +146,6 @@ public class Tarea {
 
     public String getParamLimitador() {
         return paramLimitador;
-    }
-
-    public String getTipoAlterador() {
-        return tipoAlterador;
-    }
-
-    public Double getProbabilidad() {
-        return probabilidad;
-    }
-
-    public Integer getOrden() {
-        return orden;
     }
 
     public Selector<IntegerGene, Double> getSurvivorsSelector() {
@@ -222,7 +230,7 @@ public class Tarea {
     }
 
     public Alterer<IntegerGene, Double> getAlterador() {
-        return getAlterer(tipoAlterador, probabilidad, orden);
+        return alterador;
     }
 
     public Predicate<? super EvolutionResult<IntegerGene, Double>> getPredicate() {
