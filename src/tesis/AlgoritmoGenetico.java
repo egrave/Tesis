@@ -94,7 +94,7 @@ public class AlgoritmoGenetico extends Thread {
 
             //System.out.println("statics:" + "\n" + statistics);
             System.out.println("Best:" + best);
-            ManagerDB.getInstance().guardarResultado(tarea.getId(), best.getFitness(), best.getGenotype().toString(), tarea.getIdAlteradores(), tarea.getCantidad(), tarea.getFiltroRelacion(), statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean() , statistics.getEvolveDuration().getMean());
+            ManagerDB.getInstance().guardarResultado(tarea.getId(), best.getFitness(), best.getGenotype().toString(), tarea.getIdAlteradores(), tarea.getCantidad(), tarea.getFiltroRelacion(), statistics.getEvolveDuration().getSum() / statistics.getEvolveDuration().getMean(), statistics.getEvolveDuration().getMean());
             //idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso
             //rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+","+cantidad+",'"+filtro+"',"+statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean()+","+statistics.getEvolveDuration().getMean()+")");
         }

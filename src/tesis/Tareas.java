@@ -31,6 +31,7 @@ public class Tareas {
             }
         }
         tareaaux = TareasPendientes.remove(0);
+        System.out.println("TAREAS PENDIENTES: " + TareasPendientes.size());
         return tareaaux;
     }
 

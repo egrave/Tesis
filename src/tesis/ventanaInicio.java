@@ -405,11 +405,10 @@ public class ventanaInicio extends javax.swing.JFrame {
 
             Tareas tareas = new Tareas();
 
-            
             //Carga la las tareas correspondientes a la configuracion 1
-            CargarTareas(tareas, 1, filtro, cantidad, driver, vector);
+            CargarTareas(tareas, 2, filtro, cantidad, driver, vector);
 
-            int cantidadthreads = 1;
+            int cantidadthreads = 3;
             for (int i = 1; i <= cantidadthreads; i++) {
                 new AlgoritmoGenetico(tareas).start();
             };
@@ -420,9 +419,9 @@ public class ventanaInicio extends javax.swing.JFrame {
         //Carga la las tareas correspondientes a la configuracion dada
         ManagerDB mgdb = ManagerDB.getInstance();
         ResultSet rs = mgdb.getConfiguraciones(configuracion);
+        ResultSet rs2 = mgdb.getTodosAteradores();
         try {
             while (rs.next()) {
-                ResultSet rs2 = mgdb.getTodosAteradores();
                 Tarea tarea = null;
                 Integer idConfig = null;
                 try {
@@ -431,7 +430,7 @@ public class ventanaInicio extends javax.swing.JFrame {
                         if ((idConfig == null) || (idConfig != nuevoIdConfig)) {
                             idConfig = rs2.getInt("idConfiguracionAlteradores");
                             //(int id, String filtroRelacion, int cantidad, Driver driver, Vector<Investigador> investigadores, int population, String survivorselector, String survivorparam, String offspringselector, String offspringparam, long maxCorridas, String limitador, String paramLimitador, String tipoAlterador, Double probabilidad, Integer orden)
-                            tarea = new Tarea(configuracion, idConfig , filtro, cantidad, driver, investigadores, rs.getInt("population"), rs.getString("survivorselector"), rs.getString("survivorparam"), rs.getString("offspringselector"), rs.getString("offspringparam"), rs.getLong("maxCorridas"), rs.getString("limitador"), rs.getString("paramLimitador"), rs2.getString("tipo"), rs2.getDouble("probabilidad"), rs2.getInt("orden"));
+                            tarea = new Tarea(configuracion, idConfig, filtro, cantidad, driver, investigadores, rs.getInt("population"), rs.getString("survivorselector"), rs.getString("survivorparam"), rs.getString("offspringselector"), rs.getString("offspringparam"), rs.getLong("maxCorridas"), rs.getString("limitador"), rs.getString("paramLimitador"), rs2.getString("tipo"), rs2.getDouble("probabilidad"), rs2.getInt("orden"));
                             //Tarea tarea = new Tarea(filtroRelacion, 5, driver, vector, 1000, "TournamentSelector", "100", "TournamentSelector", "100", 1000, "bySteadyFitness", "100", "Mutator", 0.25, null);
                             tareas.Put(tarea);
                         } else {

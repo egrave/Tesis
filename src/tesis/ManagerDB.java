@@ -33,7 +33,7 @@ public final class ManagerDB {
     }
 
     public ResultSet getConfiguraciones(int idConfiguracion) {
-        ResultSet rs = conexion.ejecutarSQLSelect("select * from configuraciones where id>=" + idConfiguracion);
+        ResultSet rs = conexion.ejecutarSQLSelect("select * from configuraciones where id=" + idConfiguracion);
         return rs;
     }
 
@@ -42,8 +42,9 @@ public final class ManagerDB {
         return rs;
     }
 //statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean() , statistics.getEvolveDuration().getMean()
-    public void guardarResultado(int id, double fitness, String vector, int idAlteradores, int comite, String filtro, double generaciones, double tiempo){
+
+    public void guardarResultado(int id, double fitness, String vector, int idAlteradores, int comite, String filtro, double generaciones, double tiempo) {
         conexion.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso) values ("
-                +id+","+fitness+",'"+vector+"',"+idAlteradores+","+comite+",'"+filtro+"',"+generaciones+","+tiempo+")");
+                + id + "," + fitness + ",'" + vector + "'," + idAlteradores + "," + comite + ",'" + filtro + "'," + generaciones + "," + tiempo + ")");
     }
 }
