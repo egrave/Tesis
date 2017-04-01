@@ -19,6 +19,8 @@ import static org.jenetics.engine.limit.bySteadyFitness;
 
 import java.util.Random;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -154,12 +156,14 @@ public class Algoritmo extends Thread{
                                 // Update the evaluation statistics after
                                 // each generation
                                 .peek(statistics)
+                                .peek(r -> System.out.println( r.getTotalGenerations() + "\t" + r.getBestPhenotype().getFitness() + "\t" + r.getBestPhenotype().getGenotype()))
                                 // Collect (reduce) the evolution stream to
                                 // its best phenotype.
                                 .collect(toBestPhenotype());
                         
                             con.ejecutarSQL("insert into tesis.salida (idconfiguracion,fitness,vector,idConfiguracionAlteradores,comite,filtro,generaciones,tiempoPaso) values ("+rs.getString("id")+","+best.getFitness()+",'"+best.getGenotype()+"',"+idAlteradores+","+cantidad+",'"+filtro+"',"+statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean()+","+statistics.getEvolveDuration().getMean()+")");
                         }
+
                     }
                 }
             } catch (SQLException ex) {

@@ -25,6 +25,7 @@ import POJO.Resideen;
 import POJO.Tienecomodisciplina;
 import POJO.Trabajaen;
 import com.google.gson.Gson;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,6 +37,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.jenetics.Alterer;
+import org.jenetics.IntegerGene;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -66,26 +69,28 @@ public class ventanaInicio extends javax.swing.JFrame {
      * Creates new form ventanaInicio
      */
     Driver driver;
+
     public ventanaInicio() {
         initComponents();
-        driver = GraphDatabase.driver( "bolt://localhost", AuthTokens.basic( "neo4j", "123456" ) );
+        driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "123456"));
         Session session = driver.session();
         Gson gson = new Gson();
-        StatementResult result= session.run("MATCH (p:investigador) RETURN keys(p) as claves limit 1;");
-        while(result.hasNext()){
-            Record record=result.next(); 
-            List<Object> lista=record.get( "claves" ).asList();
-            for(int i=0;i<lista.size();i++)
+        StatementResult result = session.run("MATCH (p:investigador) RETURN keys(p) as claves limit 1;");
+        while (result.hasNext()) {
+            Record record = result.next();
+            List<Object> lista = record.get("claves").asList();
+            for (int i = 0; i < lista.size(); i++) {
                 jComboPropiedad.addItem(String.valueOf(lista.get(i)));
+            }
         }
-        StatementResult relaciones= session.run("match ()-[r]-() return distinct type(r) as relacion");
-        while(relaciones.hasNext()){
-            Record record=relaciones.next(); 
-            jComboRelacion.addItem(record.get( "relacion" ).asString());
+        StatementResult relaciones = session.run("match ()-[r]-() return distinct type(r) as relacion");
+        while (relaciones.hasNext()) {
+            Record record = relaciones.next();
+            jComboRelacion.addItem(record.get("relacion").asString());
         }
-        
+
         session.close();
-  
+
     }
 
     /**
@@ -318,10 +323,10 @@ public class ventanaInicio extends javax.swing.JFrame {
     private void jComboPropiedadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboPropiedadActionPerformed
         jComboValor.removeAllItems();
         Session session = driver.session();
-        StatementResult result= session.run("MATCH (p:investigador) RETURN distinct p."+jComboPropiedad.getSelectedItem()+" as resultado order by resultado ;");
-        while(result.hasNext()){
-            Record record=result.next(); 
-            jComboValor.addItem(record.get( "resultado").asString());
+        StatementResult result = session.run("MATCH (p:investigador) RETURN distinct p." + jComboPropiedad.getSelectedItem() + " as resultado order by resultado ;");
+        while (result.hasNext()) {
+            Record record = result.next();
+            jComboValor.addItem(record.get("resultado").asString());
         }
     }//GEN-LAST:event_jComboPropiedadActionPerformed
 
@@ -330,19 +335,19 @@ public class ventanaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboValorActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        DefaultTableModel dtm= (DefaultTableModel)jTablePropiedades.getModel();
+        DefaultTableModel dtm = (DefaultTableModel) jTablePropiedades.getModel();
         dtm.addRow(new Object[2]);
-        int indice=dtm.getRowCount()-1;
-        dtm.setValueAt(jComboPropiedad.getSelectedItem(), indice,0);
-        dtm.setValueAt(jComboValor.getSelectedItem(), indice,1);
-        
+        int indice = dtm.getRowCount() - 1;
+        dtm.setValueAt(jComboPropiedad.getSelectedItem(), indice, 0);
+        dtm.setValueAt(jComboValor.getSelectedItem(), indice, 1);
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        DefaultTableModel dtm= (DefaultTableModel)jTableRelaciones.getModel();
+        DefaultTableModel dtm = (DefaultTableModel) jTableRelaciones.getModel();
         dtm.addRow(new Object[1]);
-        int indice=dtm.getRowCount()-1;
-        dtm.setValueAt(jComboRelacion.getSelectedItem(), indice,0);
+        int indice = dtm.getRowCount() - 1;
+        dtm.setValueAt(jComboRelacion.getSelectedItem(), indice, 0);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -355,39 +360,42 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .stream());  
         session.close();
         driver.close();*/
-       Integer cantidad=0;
-       try{
-        cantidad=Integer.valueOf(jTextCantidad.getText());
-       }catch(Exception e){
-       JOptionPane.showMessageDialog(rootPane, "Debe ingresar un numero entero en el campo cantidad de miembros del comite", "Error", 0);
+        Integer cantidad = 0;
+        try {
+            cantidad = Integer.valueOf(jTextCantidad.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, "Debe ingresar un numero entero en el campo cantidad de miembros del comite", "Error", 0);
         }
-        if(cantidad>0){
+        if (cantidad > 0) {
             SessionFactory sessionFactory = new SessionFactory("POJO");
-            org.neo4j.ogm.session.Session session=sessionFactory.openSession();
+            org.neo4j.ogm.session.Session session = sessionFactory.openSession();
             //session = sessionFactory.openSession("http://localhost:7474","neo4j","123456");
-          String consulta="MATCH (i:investigador)";
-            String textoXML="";
-              int n=0;
-             DefaultTableModel dtm=(DefaultTableModel)jTablePropiedades.getModel();
-             String filtro="";
-            for(int i=0;i<jTablePropiedades.getRowCount();i++){
-                if(i==0)
-                    filtro=filtro+" where i."+dtm.getValueAt(i,0)+"='"+dtm.getValueAt(i, 1)+"'";
-                else
-                    filtro=filtro+" and i."+dtm.getValueAt(i,0)+"='"+dtm.getValueAt(i, 1)+"'";
-            } 
-       consulta=consulta+filtro+" return i";       
-       Iterable<Investigador> iterableInv=session.query(Investigador.class,consulta,Collections.<String, Object> emptyMap());
-       Iterator<Investigador> iteradorInv=iterableInv.iterator();
-       Vector<Investigador> vector= new Vector<Investigador>();
-       while(iteradorInv.hasNext()){
-        Investigador i=iteradorInv.next();
-        textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre()+" "+i.getApellido()+"\"/> \n";
-        vector.add(i);
-        n=n+1;
-       }
-       if(checkboxgexf.getState())
-        generarArchivoDibujo(textoXML, session, n, filtro);
+            String consulta = "MATCH (i:investigador)";
+            String textoXML = "";
+            int n = 0;
+            DefaultTableModel dtm = (DefaultTableModel) jTablePropiedades.getModel();
+            String filtro = "";
+            for (int i = 0; i < jTablePropiedades.getRowCount(); i++) {
+                if (i == 0) {
+                    filtro = filtro + " where i." + dtm.getValueAt(i, 0) + "='" + dtm.getValueAt(i, 1) + "'";
+                } else {
+                    filtro = filtro + " and i." + dtm.getValueAt(i, 0) + "='" + dtm.getValueAt(i, 1) + "'";
+                }
+            }
+            consulta = consulta + filtro + " return i";
+            Iterable<Investigador> iterableInv = session.query(Investigador.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Investigador> iteradorInv = iterableInv.iterator();
+            Vector<Investigador> vector = new Vector<Investigador>();
+            while (iteradorInv.hasNext()) {
+                Investigador i = iteradorInv.next();
+                //textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre()+" "+i.getApellido()+"\"/> \n";
+                //System.out.println("vector.add(new Investigador(\"" + i.getNombre() + "\", \""+ i.getTipoInstitucionTrabajo()+ "\", \"" + i.getInstitucionDeTrabajoEscape()+"\", \""+ i.getCuitOPasaporte()+"\", \""+ i.getSexo() + "\", \"" + i.getDisciplinaActuacion() +"\", \""+ i.getProvinciaResidencia() +"\", \""+ i.getRangoEtario() + "\", \""+ i.getMaximoNivelEducativo() +"\", \""+ i.getRangoDeActualizacionCV() +"\", \""+i.getNacionalidad()+"\", \""+ i.getProvinciaLugarDeTrabajo() +"\", \""+ i.getApellido() +"\", \""+i.getIdentificador()+"\", \"" +i.getGranAreaActuacion() +"\") );");
+                vector.add(i);
+                n = n + 1;
+            }
+            String filtroRelacion = crearFiltro();
+            /*       if(checkboxgexf.getState())
+        generarArchivoDibujo(textoXML, session, n, filtro,filtroRelacion);
        try {
                 Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,1044,1110);
                  Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,1110,1170);
@@ -396,141 +404,188 @@ public class ventanaInicio extends javax.swing.JFrame {
                    Algoritmo e= new Algoritmo(vector,driver,crearFiltro(),cantidad,1300,1367);
                    
                    a.start();
-                    b.start();
-                     c.start();
-                      d.start();
-                      e.start();
-                   
             } catch (SQLException ex) {
                 Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-     }
+            }*/
+
+            Tareas tareas = new Tareas();
+
+            //Carga la las tareas correspondientes a la configuracion 1
+            
+                for(int i=3773;i<=3773;i++)
+                    CargarTareas(tareas, i, filtro, cantidad, driver, vector);
+
+            int cantidadthreads = 4;
+            for (int i = 1; i <= cantidadthreads; i++) {
+                new AlgoritmoGenetico(tareas).start();
+            };
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    public void generarArchivoDibujo(String investigadores,org.neo4j.ogm.session.Session session,int cantInv,String filtro){
-       String textoXML=investigadores;
-       int n=cantInv;
-       String consulta="MATCH (n:disciplina) return n";
-      System.out.println(consulta);
-      session.clear();
-       Iterable<Disciplina> iterableDis=session.query(Disciplina.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Disciplina> iteradorDis=iterableDis.iterator();
-       while(iteradorDis.hasNext()){
-        Disciplina d=iteradorDis.next();
-        textoXML=textoXML+"<node id=\""+d.getId()+ "\" label=\""+d.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+    private void CargarTareas(Tareas tareas, int configuracion, String filtro, int cantidad, Driver driver, Vector<Investigador> investigadores) {
+        //Carga la las tareas correspondientes a la configuracion dada
+        ManagerDB mgdb = ManagerDB.getInstance();
+        ResultSet rs = mgdb.getConfiguraciones(configuracion);
+        ResultSet rs2 = mgdb.getTodosAteradores();
+        try {
+            while (rs.next()) {
+                Tarea tarea = null;
+                Integer idConfig = null;
+                try {
+                    while (rs2.next()) {
+                        int nuevoIdConfig = rs2.getInt("idConfiguracionAlteradores");
+                        if ((idConfig == null) || (idConfig != nuevoIdConfig)) {
+                            idConfig = rs2.getInt("idConfiguracionAlteradores");
+                            //(int id, String filtroRelacion, int cantidad, Driver driver, Vector<Investigador> investigadores, int population, String survivorselector, String survivorparam, String offspringselector, String offspringparam, long maxCorridas, String limitador, String paramLimitador, String tipoAlterador, Double probabilidad, Integer orden)
+                            tarea = new Tarea(configuracion, idConfig, filtro, cantidad, driver, investigadores, rs.getInt("population"), rs.getString("survivorselector"), rs.getString("survivorparam"), rs.getString("offspringselector"), rs.getString("offspringparam"), rs.getLong("maxCorridas"), rs.getString("limitador"), rs.getString("paramLimitador"), rs2.getString("tipo"), rs2.getDouble("probabilidad"), rs2.getInt("orden"));
+                            //Tarea tarea = new Tarea(filtroRelacion, 5, driver, vector, 1000, "TournamentSelector", "100", "TournamentSelector", "100", 1000, "bySteadyFitness", "100", "Mutator", 0.25, null);
+                            tareas.Put(tarea);
+                        } else {
+                            tarea.AddAlterador(rs2.getString("tipo"), rs2.getDouble("probabilidad"), rs2.getInt("orden"));
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
         }
-          consulta="MATCH (n:institucion) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Institucion> iterableIns=session.query(Institucion.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Institucion> iteradorIns=iterableIns.iterator();
-       while(iteradorIns.hasNext()){
-        Institucion i=iteradorIns.next();
-        textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre().replaceAll("\"", "")+"\"/> \n";
-         n=n+1;
-                   
+
+    }
+
+    public void generarArchivoDibujo(String investigadores, org.neo4j.ogm.session.Session session, int cantInv, String filtro, String filtroRelacion) {
+        String textoXML = investigadores;
+        int n = cantInv;
+        String consulta = "";
+        if (filtroRelacion.contains("tienecomodisciplina") || filtroRelacion.equals("")) {
+            consulta = "MATCH (n:disciplina) return n";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Disciplina> iterableDis = session.query(Disciplina.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Disciplina> iteradorDis = iterableDis.iterator();
+            while (iteradorDis.hasNext()) {
+                Disciplina d = iteradorDis.next();
+                textoXML = textoXML + "<node id=\"" + d.getId() + "\" label=\"" + d.getNombre() + "\"/> \n";
+                n = n + 1;
+            }
         }
-       
-       consulta="MATCH (n:rangoetario) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Rangoetario> iterableRE=session.query(Rangoetario.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Rangoetario> iteradorRE=iterableRE.iterator();
-       while(iteradorRE.hasNext()){
-        Rangoetario re=iteradorRE.next();
-        textoXML=textoXML+"<node id=\""+re.getId()+ "\" label=\""+re.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+        if (filtroRelacion.contains("trabajaen") || filtroRelacion.equals("")) {
+            consulta = "MATCH (n:institucion) return n";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Institucion> iterableIns = session.query(Institucion.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Institucion> iteradorIns = iterableIns.iterator();
+            while (iteradorIns.hasNext()) {
+                Institucion i = iteradorIns.next();
+                textoXML = textoXML + "<node id=\"" + i.getId() + "\" label=\"" + i.getNombre().replaceAll("\"", "") + "\"/> \n";
+                n = n + 1;
+            }
         }
-        
-       consulta="MATCH (n:pais) return n";
-      System.out.println(consulta);
-     session.clear();
-            Iterable<Pais> iterablePais=session.query(Pais.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Pais> iteradorPais=iterablePais.iterator();
-       while(iteradorPais.hasNext()){
-        Pais p=iteradorPais.next();
-        textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+
+        if (filtroRelacion.contains("edad") || filtroRelacion.equals("")) {
+            consulta = "MATCH (n:rangoetario) return n";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Rangoetario> iterableRE = session.query(Rangoetario.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Rangoetario> iteradorRE = iterableRE.iterator();
+            while (iteradorRE.hasNext()) {
+                Rangoetario re = iteradorRE.next();
+                textoXML = textoXML + "<node id=\"" + re.getId() + "\" label=\"" + re.getNombre() + "\"/> \n";
+                n = n + 1;
+            }
         }
-       
-         consulta="MATCH (n:provincia) return n";
-      System.out.println(consulta);
-     session.clear();
-       Iterable<Provincia> iterableProv=session.query(Provincia.class,consulta,Collections.<String, Object> emptyMap());
-     Iterator<Provincia> iteradorProv=iterableProv.iterator();
-       while(iteradorProv.hasNext()){
-        Provincia p=iteradorProv.next();
-        textoXML=textoXML+"<node id=\""+p.getId()+ "\" label=\""+p.getNombre()+"\"/> \n";
-         n=n+1;
-                   
+
+        if (filtroRelacion.contains("nacionalidad") || filtroRelacion.equals("")) {
+            consulta = "MATCH (n:pais) return n";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Pais> iterablePais = session.query(Pais.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Pais> iteradorPais = iterablePais.iterator();
+            while (iteradorPais.hasNext()) {
+                Pais p = iteradorPais.next();
+                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"/> \n";
+                n = n + 1;
+            }
         }
-      
-     String textoxmlEnlaces="";
-     int x=0;
-   
-    consulta=" MATCH p=(i:investigador)-[r:trabajaen]->()  "+filtro+" RETURN p";
-    System.out.println(consulta);
-    session.clear();
-    Iterable<Trabajaen> iterableTrabaja=session.query(Trabajaen.class,consulta,Collections.<String, Object> emptyMap());
-    Iterator<Trabajaen> iteradorTrabaja=iterableTrabaja.iterator();
-    while(iteradorTrabaja.hasNext()){
-        Trabajaen te=iteradorTrabaja.next();
-        textoxmlEnlaces=textoxmlEnlaces+"<edge id=\""+te.getId()+ "\" source=\""+te.getOrigen().getId()+"\" target=\""+te.getDestino().getId()+"\" /> \n";
-         x=x+1;
+
+        if (filtroRelacion.contains("resideen") || filtroRelacion.equals("")) {
+            consulta = "MATCH (n:provincia) return n";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Provincia> iterableProv = session.query(Provincia.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Provincia> iteradorProv = iterableProv.iterator();
+            while (iteradorProv.hasNext()) {
+                Provincia p = iteradorProv.next();
+                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"/> \n";
+                n = n + 1;
+            }
+        }
+
+        String textoxmlEnlaces = "";
+        int x = 0;
+
+        consulta = " MATCH p=(i:investigador)-[r:trabajaen]->()  " + filtro + " RETURN p";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Trabajaen> iterableTrabaja = session.query(Trabajaen.class, consulta, Collections.<String, Object>emptyMap());
+        Iterator<Trabajaen> iteradorTrabaja = iterableTrabaja.iterator();
+        while (iteradorTrabaja.hasNext()) {
+            Trabajaen te = iteradorTrabaja.next();
+            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + te.getId() + "\" source=\"" + te.getOrigen().getId() + "\" target=\"" + te.getDestino().getId() + "\" /> \n";
+            x = x + 1;
+        }
+
+        consulta = " MATCH p=(i:investigador)-[r:nacionalidad]->() " + filtro + " RETURN p";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Nacionalidad> iterableNacionalidad = session.query(Nacionalidad.class, consulta, Collections.<String, Object>emptyMap());
+        Iterator<Nacionalidad> iteradorNacionalidad = iterableNacionalidad.iterator();
+        while (iteradorNacionalidad.hasNext()) {
+            Nacionalidad nac = iteradorNacionalidad.next();
+            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + nac.getId() + "\" source=\"" + nac.getOrigen().getId() + "\" target=\"" + nac.getDestino().getId() + "\" /> \n";
+            x = x + 1;
+        }
+
+        consulta = " MATCH p=(i:investigador)-[r:edad]->() " + filtro + " RETURN p";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Edad> iterableEdad = session.query(Edad.class, consulta, Collections.<String, Object>emptyMap());
+        Iterator<Edad> iteradorEdad = iterableEdad.iterator();
+        while (iteradorEdad.hasNext()) {
+            Edad e = iteradorEdad.next();
+            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + e.getId() + "\" source=\"" + e.getOrigen().getId() + "\" target=\"" + e.getDestino().getId() + "\" /> \n";
+            x = x + 1;
+        }
+
+        consulta = " MATCH p=(i:investigador)-[r:resideen]->() " + filtro + " RETURN p";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Resideen> iterableReside = session.query(Resideen.class, consulta, Collections.<String, Object>emptyMap());
+        Iterator<Resideen> iteradorReside = iterableReside.iterator();
+        while (iteradorReside.hasNext()) {
+            Resideen re = iteradorReside.next();
+            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + re.getId() + "\" source=\"" + re.getOrigen().getId() + "\" target=\"" + re.getDestino().getId() + "\" /> \n";
+            x = x + 1;
+        }
+
+        consulta = " MATCH p=(i:investigador)-[r:tienecomodisciplina]->() " + filtro + " RETURN p";
+        System.out.println(consulta);
+        session.clear();
+        Iterable<Tienecomodisciplina> iterableDisciplina = session.query(Tienecomodisciplina.class, consulta, Collections.<String, Object>emptyMap());
+        Iterator<Tienecomodisciplina> iteradorDisciplina = iterableDisciplina.iterator();
+        while (iteradorDisciplina.hasNext()) {
+            Tienecomodisciplina d = iteradorDisciplina.next();
+            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + d.getId() + "\" source=\"" + d.getOrigen().getId() + "\" target=\"" + d.getDestino().getId() + "\" /> \n";
+            x = x + 1;
+        }
+        textoXML = "<nodes count=\"" + n + "\"> \n " + textoXML + "</nodes>";
+        textoxmlEnlaces = "<edges count=\"" + x + "\"> \n " + textoxmlEnlaces + "</edges>";
+        System.out.println(textoxmlEnlaces);
+        Escritor.escribir(textoXML + "\n" + textoxmlEnlaces, "C:\\Users\\Edu\\Desktop\\Tesis\\nodos.xml");
     }
-      
-    consulta=" MATCH p=(i:investigador)-[r:nacionalidad]->() "+filtro+" RETURN p";
-    System.out.println(consulta);
-    session.clear();
-    Iterable<Nacionalidad> iterableNacionalidad=session.query(Nacionalidad.class,consulta,Collections.<String, Object> emptyMap());
-    Iterator<Nacionalidad> iteradorNacionalidad=iterableNacionalidad.iterator();
-    while(iteradorNacionalidad.hasNext()){
-        Nacionalidad nac=iteradorNacionalidad.next();
-        textoxmlEnlaces=textoxmlEnlaces+"<edge id=\""+nac.getId()+ "\" source=\""+nac.getOrigen().getId()+"\" target=\""+nac.getDestino().getId()+"\" /> \n";
-         x=x+1;
-    }
-       
-    consulta=" MATCH p=(i:investigador)-[r:edad]->() "+filtro+" RETURN p";
-    System.out.println(consulta);
-    session.clear();
-    Iterable<Edad> iterableEdad=session.query(Edad.class,consulta,Collections.<String, Object> emptyMap());
-    Iterator<Edad> iteradorEdad=iterableEdad.iterator();
-    while(iteradorEdad.hasNext()){
-        Edad e=iteradorEdad.next();
-        textoxmlEnlaces=textoxmlEnlaces+"<edge id=\""+e.getId()+ "\" source=\""+e.getOrigen().getId()+"\" target=\""+e.getDestino().getId()+"\" /> \n";
-         x=x+1;
-    }
-    
-    consulta=" MATCH p=(i:investigador)-[r:resideen]->() "+filtro+" RETURN p";
-    System.out.println(consulta);
-    session.clear();
-    Iterable<Resideen> iterableReside=session.query(Resideen.class,consulta,Collections.<String, Object> emptyMap());
-    Iterator<Resideen> iteradorReside=iterableReside.iterator();
-    while(iteradorReside.hasNext()){
-        Resideen re=iteradorReside.next();
-        textoxmlEnlaces=textoxmlEnlaces+"<edge id=\""+re.getId()+ "\" source=\""+re.getOrigen().getId()+"\" target=\""+re.getDestino().getId()+"\" /> \n";
-         x=x+1;
-    }
-    
-    consulta=" MATCH p=(i:investigador)-[r:tienecomodisciplina]->() "+filtro+" RETURN p";
-    System.out.println(consulta);
-    session.clear();
-    Iterable<Tienecomodisciplina> iterableDisciplina=session.query(Tienecomodisciplina.class,consulta,Collections.<String, Object> emptyMap());
-    Iterator<Tienecomodisciplina> iteradorDisciplina=iterableDisciplina.iterator();
-    while(iteradorDisciplina.hasNext()){
-        Tienecomodisciplina d=iteradorDisciplina.next();
-        textoxmlEnlaces=textoxmlEnlaces+"<edge id=\""+d.getId()+ "\" source=\""+d.getOrigen().getId()+"\" target=\""+d.getDestino().getId()+"\" /> \n";
-         x=x+1;
-    }
-    textoXML="<nodes count=\""+n+"\"> \n "+ textoXML+ "</nodes>";
-    textoxmlEnlaces="<edges count=\""+x+"\"> \n "+ textoxmlEnlaces+ "</edges>";
-    System.out.println(textoxmlEnlaces);
-    Escritor.escribir(textoXML+"\n"+textoxmlEnlaces, "C:\\Users\\Edu\\Desktop\\Tesis\\nodos.xml");  
-    }
+
     /**
      * @param args the command line arguments
      */
@@ -590,15 +645,16 @@ public class ventanaInicio extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private String crearFiltro() {
-         DefaultTableModel dtm=(DefaultTableModel)jTableRelaciones.getModel();
-         String resultado="";
-         for(int i=0;i<dtm.getRowCount();i++)
-             resultado=resultado+dtm.getValueAt(i,0)+"|";
-         if(!resultado.equals("")){
-             resultado=":"+resultado;
-             resultado=resultado.substring(0, resultado.length()-1);
-          }
-         System.out.println("resultado: "+resultado);
-         return resultado;
+        DefaultTableModel dtm = (DefaultTableModel) jTableRelaciones.getModel();
+        String resultado = "";
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            resultado = resultado + dtm.getValueAt(i, 0) + "|";
+        }
+        if (!resultado.equals("")) {
+            resultado = ":" + resultado;
+            resultado = resultado.substring(0, resultado.length() - 1);
+        }
+        System.out.println("resultado: " + resultado);
+        return resultado;
     }
 }

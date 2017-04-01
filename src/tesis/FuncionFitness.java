@@ -50,23 +50,28 @@ public Double apply(final Genotype<IntegerGene> gt) {
                 Double sum=0.0;
                 int iteraciones=0;
                 int invAnterior=-1;
-                Iterator<Chromosome<IntegerGene>> ite1=gt.iterator();
+                //Iterator<Chromosome<IntegerGene>> ite1=gt.iterator();
+                Chromosome<IntegerGene> cromo=gt.iterator().next();
+                Iterator<IntegerGene> ite1=cromo.iterator();
                 int index1=0;
                 int divisor=0;
                 while(ite1.hasNext()){
                     Integer val2=-1;
-                    Iterator<Chromosome<IntegerGene>> ite2=gt.iterator();
-                       int index2=0;
-                       Integer val=ite1.next().getGene().intValue();
-                       
-                       while(index2<=index1 && ite2.hasNext()){
-                           val2=ite2.next().getGene().intValue();
-                           index2++;
-                       }
-                        if(index2>index1){
+                    //Iterator<Chromosome<IntegerGene>> ite2=gt.iterator();
+                    Iterator<IntegerGene> ite2=cromo.iterator();
+                    int index2=0;
+                    //Integer val=ite1.next().getGene().intValue();
+                    Integer val=ite1.next().intValue();
+                    while(index2<=index1 && ite2.hasNext()){
+                        //val2=ite2.next().getGene().intValue();
+                        val2=ite2.next().intValue();
+                        index2++;
+                     }
+                     if(index2>index1){
                             while(ite2.hasNext()){
                                 int distancia=10;
-                                val2=ite2.next().getGene().intValue();
+                                //val2=ite2.next().getGene().intValue();
+                                val2=ite2.next().intValue();
                                 StatementResult result= session.run("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-["+filtro+"*0..]-(to)) WHERE id(from) = "+investigadores.get(val).getId()+" AND id(to) ="+investigadores.get(val2).getId()+"  RETURN length(path) AS distancia ");
                                 if (result.hasNext() ){
                                  Record record=result.next();
