@@ -413,7 +413,7 @@ public class ventanaInicio extends javax.swing.JFrame {
             //Carga la las tareas correspondientes a la configuracion 1
             
                 for(int i=3773;i<=3773;i++)
-                    CargarTareas(tareas, i, filtro, cantidad, driver, vector);
+                    CargarTareas(tareas, i, filtroRelacion, cantidad, driver, vector);
 
             int cantidadthreads = 4;
             for (int i = 1; i <= cantidadthreads; i++) {
@@ -426,7 +426,7 @@ public class ventanaInicio extends javax.swing.JFrame {
         //Carga la las tareas correspondientes a la configuracion dada
         ManagerDB mgdb = ManagerDB.getInstance();
         ResultSet rs = mgdb.getConfiguraciones(configuracion);
-        ResultSet rs2 = mgdb.getTodosAteradores();
+        ResultSet rs2 = mgdb.getAterador(408);
         try {
             while (rs.next()) {
                 Tarea tarea = null;

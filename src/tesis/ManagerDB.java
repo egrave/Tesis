@@ -41,8 +41,8 @@ public final class ManagerDB {
         ResultSet rs = conexion.ejecutarSQLSelect("select * from alteradores where idConfiguracionAlteradores>171 order by id");
         return rs;
     }
-     public ResultSet getAteradorEstandar() {
-        ResultSet rs = conexion.ejecutarSQLSelect("select * from alteradores  where idConfiguracionAlteradores=50 order by id");
+     public ResultSet getAterador(int i) {
+        ResultSet rs = conexion.ejecutarSQLSelect("select * from alteradores  where idConfiguracionAlteradores="+i+" order by id");
         return rs;
     }
 //statistics.getEvolveDuration().getSum()/statistics.getEvolveDuration().getMean() , statistics.getEvolveDuration().getMean()
