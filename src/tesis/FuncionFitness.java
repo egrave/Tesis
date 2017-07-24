@@ -73,6 +73,7 @@ public Double apply(final Genotype<IntegerGene> gt) {
                                 //val2=ite2.next().getGene().intValue();
                                 val2=ite2.next().intValue();
                                 StatementResult result= session.run("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-["+filtro+"*0..]-(to)) WHERE id(from) = "+investigadores.get(val).getId()+" AND id(to) ="+investigadores.get(val2).getId()+"  RETURN length(path) AS distancia ");
+                                //System.out.println("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-["+filtro+"*0..]-(to)) WHERE id(from) = "+investigadores.get(val).getId()+" AND id(to) ="+investigadores.get(val2).getId()+"  RETURN length(path) AS distancia ");
                                 if (result.hasNext() ){
                                  Record record=result.next();
                                  distancia=Integer.valueOf(record.asMap().get("distancia").toString());

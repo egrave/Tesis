@@ -37,8 +37,13 @@ public final class ManagerDB {
         return rs;
     }
 
+    public ResultSet getMaxConfiguraciones() {
+        ResultSet rs = conexion.ejecutarSQLSelect("select Max(id) as maximo from configuraciones");
+        return rs;
+    }
+    
     public ResultSet getTodosAteradores() {
-        ResultSet rs = conexion.ejecutarSQLSelect("select * from alteradores where idConfiguracionAlteradores>171 order by id");
+        ResultSet rs = conexion.ejecutarSQLSelect("select * from alteradores  order by id");
         return rs;
     }
      public ResultSet getAterador(int i) {

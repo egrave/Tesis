@@ -25,6 +25,8 @@ import POJO.Resideen;
 import POJO.Tienecomodisciplina;
 import POJO.Trabajaen;
 import com.google.gson.Gson;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -72,6 +74,8 @@ public class ventanaInicio extends javax.swing.JFrame {
 
     public ventanaInicio() {
         initComponents();
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/icono.jpg"));
+        setIconImage(icon);
         driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "123456"));
         Session session = driver.session();
         Gson gson = new Gson();
@@ -110,6 +114,7 @@ public class ventanaInicio extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jComboPropiedad = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -118,13 +123,16 @@ public class ventanaInicio extends javax.swing.JFrame {
         jComboRelacion = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jTextCantidad = new javax.swing.JTextField();
         checkboxgexf = new java.awt.Checkbox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Formador de grupos");
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setName(""); // NOI18N
 
         jTablePropiedades.setModel(new javax.swing.table.DefaultTableModel(
@@ -163,26 +171,35 @@ public class ventanaInicio extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setText("Eliminar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel1))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jComboPropiedad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboValor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(1, 1, 1))
+                            .addComponent(jComboValor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,11 +212,13 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jComboValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -208,6 +227,7 @@ public class ventanaInicio extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Filtro relaciones");
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel2.setName(""); // NOI18N
 
         jTableRelaciones.setModel(new javax.swing.table.DefaultTableModel(
@@ -220,6 +240,12 @@ public class ventanaInicio extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTableRelaciones);
 
+        jComboRelacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboRelacionActionPerformed(evt);
+            }
+        });
+
         jLabel5.setText("Relacion");
 
         jButton2.setText("Agregar");
@@ -229,23 +255,31 @@ public class ventanaInicio extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setText("Eliminar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboRelacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jButton2))
-                            .addComponent(jComboRelacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(1, 1, 1))
+                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,7 +292,9 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addGap(11, 11, 11)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addContainerGap())
         );
 
         jButton3.setLabel("Ejecutar");
@@ -277,20 +313,24 @@ public class ventanaInicio extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(checkboxgexf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel6)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addGap(103, 103, 103)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3)))
                 .addContainerGap())
@@ -302,7 +342,7 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -310,11 +350,11 @@ public class ventanaInicio extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
+                .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton3)
                     .addComponent(checkboxgexf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -351,15 +391,6 @@ public class ventanaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        /*Session session = driver.session();
-        Gson gson = new Gson();
-        StatementResult result= session.run("MATCH (from:investigador), (to:investigador) , path = shortestPath((from)-[*0..]-(to)) RETURN path AS shortestPath ");
-        GraphDatabaseService graphDb = new EmbeddedGraphDatabase("C:\\Users\\Edu\\Documents\\Neo4j\\default.graphdb");
-        System.out.println(graphDb.index().forNodes( "investigador" )
-                .query( "match m:investigador" )
-                .stream());  
-        session.close();
-        driver.close();*/
         Integer cantidad = 0;
         try {
             cantidad = Integer.valueOf(jTextCantidad.getText());
@@ -369,7 +400,6 @@ public class ventanaInicio extends javax.swing.JFrame {
         if (cantidad > 0) {
             SessionFactory sessionFactory = new SessionFactory("POJO");
             org.neo4j.ogm.session.Session session = sessionFactory.openSession();
-            //session = sessionFactory.openSession("http://localhost:7474","neo4j","123456");
             String consulta = "MATCH (i:investigador)";
             String textoXML = "";
             int n = 0;
@@ -383,50 +413,57 @@ public class ventanaInicio extends javax.swing.JFrame {
                 }
             }
             consulta = consulta + filtro + " return i";
+            System.out.println(consulta);
             Iterable<Investigador> iterableInv = session.query(Investigador.class, consulta, Collections.<String, Object>emptyMap());
             Iterator<Investigador> iteradorInv = iterableInv.iterator();
             Vector<Investigador> vector = new Vector<Investigador>();
             while (iteradorInv.hasNext()) {
                 Investigador i = iteradorInv.next();
-                //textoXML=textoXML+"<node id=\""+i.getId()+ "\" label=\""+i.getNombre()+" "+i.getApellido()+"\"/> \n";
-                //System.out.println("vector.add(new Investigador(\"" + i.getNombre() + "\", \""+ i.getTipoInstitucionTrabajo()+ "\", \"" + i.getInstitucionDeTrabajoEscape()+"\", \""+ i.getCuitOPasaporte()+"\", \""+ i.getSexo() + "\", \"" + i.getDisciplinaActuacion() +"\", \""+ i.getProvinciaResidencia() +"\", \""+ i.getRangoEtario() + "\", \""+ i.getMaximoNivelEducativo() +"\", \""+ i.getRangoDeActualizacionCV() +"\", \""+i.getNacionalidad()+"\", \""+ i.getProvinciaLugarDeTrabajo() +"\", \""+ i.getApellido() +"\", \""+i.getIdentificador()+"\", \"" +i.getGranAreaActuacion() +"\") );");
+                textoXML=textoXML+"<node  label=\""+i.getNombre()+" "+i.getApellido()+"\" id=\""+i.getId()+ "\"><attvalues><attvalue for=\"tipo\" value=\"Investigador\"></attvalue></attvalues><viz:color r=\"0\" g=\"0\" b=\"255\"></viz:color></node>";
                 vector.add(i);
                 n = n + 1;
             }
             String filtroRelacion = crearFiltro();
-            /*       if(checkboxgexf.getState())
-        generarArchivoDibujo(textoXML, session, n, filtro,filtroRelacion);
-       try {
-                Algoritmo a= new Algoritmo(vector,driver,crearFiltro(),cantidad,1044,1110);
-                 Algoritmo b=new Algoritmo(vector,driver,crearFiltro(),cantidad,1110,1170);
-                  Algoritmo c= new Algoritmo(vector,driver,crearFiltro(),cantidad,1170,1235);
-                   Algoritmo d= new Algoritmo(vector,driver,crearFiltro(),cantidad,1235,1300);
-                   Algoritmo e= new Algoritmo(vector,driver,crearFiltro(),cantidad,1300,1367);
-                   
-                   a.start();
+            String gexf="";
+            if(checkboxgexf.getState())
+                gexf=generarArchivoDibujo(textoXML, session, n, filtro,filtroRelacion);
+            Tareas tareas = new Tareas();
+            ManagerDB mgdb = ManagerDB.getInstance();
+            ResultSet rsMaximo=mgdb.getMaxConfiguraciones();
+            try {
+                if(rsMaximo.next()){
+                    for(int i=0;i<=rsMaximo.getInt("maximo");i++)
+                        CargarTareas(tareas, i, filtroRelacion, cantidad, driver, vector);
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(ventanaInicio.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-
-            Tareas tareas = new Tareas();
-
-            //Carga la las tareas correspondientes a la configuracion 1
-            
-                for(int i=3773;i<=3773;i++)
-                    CargarTareas(tareas, i, filtroRelacion, cantidad, driver, vector);
-
+            }
             int cantidadthreads = 4;
             for (int i = 1; i <= cantidadthreads; i++) {
-                new AlgoritmoGenetico(tareas).start();
+                new AlgoritmoGenetico(tareas,gexf).start();
             };
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if(jTablePropiedades.getSelectedRow()>=0)
+        ((DefaultTableModel) jTablePropiedades.getModel()).removeRow(jTablePropiedades.getSelectedRow());
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        if(jTableRelaciones.getSelectedRow()>=0)
+        ((DefaultTableModel) jTableRelaciones.getModel()).removeRow(jTableRelaciones.getSelectedRow());
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jComboRelacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboRelacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboRelacionActionPerformed
 
     private void CargarTareas(Tareas tareas, int configuracion, String filtro, int cantidad, Driver driver, Vector<Investigador> investigadores) {
         //Carga la las tareas correspondientes a la configuracion dada
         ManagerDB mgdb = ManagerDB.getInstance();
         ResultSet rs = mgdb.getConfiguraciones(configuracion);
-        ResultSet rs2 = mgdb.getAterador(408);
+        ResultSet rs2 = mgdb.getTodosAteradores();
         try {
             while (rs.next()) {
                 Tarea tarea = null;
@@ -455,7 +492,7 @@ public class ventanaInicio extends javax.swing.JFrame {
 
     }
 
-    public void generarArchivoDibujo(String investigadores, org.neo4j.ogm.session.Session session, int cantInv, String filtro, String filtroRelacion) {
+    public String generarArchivoDibujo(String investigadores, org.neo4j.ogm.session.Session session, int cantInv, String filtro, String filtroRelacion) {
         String textoXML = investigadores;
         int n = cantInv;
         String consulta = "";
@@ -467,7 +504,9 @@ public class ventanaInicio extends javax.swing.JFrame {
             Iterator<Disciplina> iteradorDis = iterableDis.iterator();
             while (iteradorDis.hasNext()) {
                 Disciplina d = iteradorDis.next();
-                textoXML = textoXML + "<node id=\"" + d.getId() + "\" label=\"" + d.getNombre() + "\"/> \n";
+                textoXML = textoXML + "<node id=\"" + d.getId() + "\" label=\"" + d.getNombre() + "\"> \n"+
+                                            " <attvalues><attvalue for=\"tipo\" value=\"Disciplina\"></attvalue></attvalues>\n" +
+                                             "<viz:color r=\"13\" g=\"231\" b=\"242\"></viz:color> </node>\n";
                 n = n + 1;
             }
         }
@@ -479,7 +518,9 @@ public class ventanaInicio extends javax.swing.JFrame {
             Iterator<Institucion> iteradorIns = iterableIns.iterator();
             while (iteradorIns.hasNext()) {
                 Institucion i = iteradorIns.next();
-                textoXML = textoXML + "<node id=\"" + i.getId() + "\" label=\"" + i.getNombre().replaceAll("\"", "") + "\"/> \n";
+                textoXML = textoXML + "<node id=\"" + i.getId() + "\" label=\"" + i.getNombre().replaceAll("\"", "") + "\">"+
+                                            " <attvalues><attvalue for=\"tipo\" value=\"Institucion\"></attvalue></attvalues>\n" +
+                                             "<viz:color r=\"140\" g=\"185\" b=\"0\"></viz:color></node>\n";
                 n = n + 1;
             }
         }
@@ -492,7 +533,9 @@ public class ventanaInicio extends javax.swing.JFrame {
             Iterator<Rangoetario> iteradorRE = iterableRE.iterator();
             while (iteradorRE.hasNext()) {
                 Rangoetario re = iteradorRE.next();
-                textoXML = textoXML + "<node id=\"" + re.getId() + "\" label=\"" + re.getNombre() + "\"/> \n";
+                textoXML = textoXML + "<node id=\"" + re.getId() + "\" label=\"" + re.getNombre() + "\"> \n"+
+                                            " <attvalues><attvalue for=\"tipo\" value=\"Edad\"></attvalue></attvalues>\n" +
+                                             "<viz:color r=\"244\" g=\"233\" b=\"11\"></viz:color></node>\n";
                 n = n + 1;
             }
         }
@@ -505,7 +548,9 @@ public class ventanaInicio extends javax.swing.JFrame {
             Iterator<Pais> iteradorPais = iterablePais.iterator();
             while (iteradorPais.hasNext()) {
                 Pais p = iteradorPais.next();
-                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"/> \n";
+                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"> \n"+
+                                            " <attvalues><attvalue for=\"tipo\" value=\"Nacionalidad\"></attvalue></attvalues>\n" +
+                                             "<viz:color r=\"54\" g=\"225\" b=\"30\"></viz:color></node>\n";
                 n = n + 1;
             }
         }
@@ -518,72 +563,91 @@ public class ventanaInicio extends javax.swing.JFrame {
             Iterator<Provincia> iteradorProv = iterableProv.iterator();
             while (iteradorProv.hasNext()) {
                 Provincia p = iteradorProv.next();
-                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"/> \n";
+                textoXML = textoXML + "<node id=\"" + p.getId() + "\" label=\"" + p.getNombre() + "\"> \n"+
+                                            " <attvalues><attvalue for=\"tipo\" value=\"Residencia\"></attvalue></attvalues>\n" +
+                                             "<viz:color r=\"0\" g=\"199\" b=\"255\"></viz:color></node>\n";
                 n = n + 1;
             }
         }
 
         String textoxmlEnlaces = "";
         int x = 0;
-
-        consulta = " MATCH p=(i:investigador)-[r:trabajaen]->()  " + filtro + " RETURN p";
-        System.out.println(consulta);
-        session.clear();
-        Iterable<Trabajaen> iterableTrabaja = session.query(Trabajaen.class, consulta, Collections.<String, Object>emptyMap());
-        Iterator<Trabajaen> iteradorTrabaja = iterableTrabaja.iterator();
-        while (iteradorTrabaja.hasNext()) {
-            Trabajaen te = iteradorTrabaja.next();
-            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + te.getId() + "\" source=\"" + te.getOrigen().getId() + "\" target=\"" + te.getDestino().getId() + "\" /> \n";
-            x = x + 1;
+        if (filtroRelacion.contains("trabajaen") || filtroRelacion.equals("")){   
+            consulta = " MATCH p=(i:investigador)-[r:trabajaen]->()  " + filtro + " RETURN p";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Trabajaen> iterableTrabaja = session.query(Trabajaen.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Trabajaen> iteradorTrabaja = iterableTrabaja.iterator();
+            while (iteradorTrabaja.hasNext()) {
+                Trabajaen te = iteradorTrabaja.next();
+                textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + te.getId() + "\" source=\"" + te.getOrigen().getId() + "\" target=\"" + te.getDestino().getId() + "\" /> \n";
+                x = x + 1;
+            }
         }
-
-        consulta = " MATCH p=(i:investigador)-[r:nacionalidad]->() " + filtro + " RETURN p";
-        System.out.println(consulta);
-        session.clear();
-        Iterable<Nacionalidad> iterableNacionalidad = session.query(Nacionalidad.class, consulta, Collections.<String, Object>emptyMap());
-        Iterator<Nacionalidad> iteradorNacionalidad = iterableNacionalidad.iterator();
-        while (iteradorNacionalidad.hasNext()) {
-            Nacionalidad nac = iteradorNacionalidad.next();
-            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + nac.getId() + "\" source=\"" + nac.getOrigen().getId() + "\" target=\"" + nac.getDestino().getId() + "\" /> \n";
-            x = x + 1;
+        if (filtroRelacion.contains("nacionalidad") || filtroRelacion.equals("")){   
+            consulta = " MATCH p=(i:investigador)-[r:nacionalidad]->() " + filtro + " RETURN p";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Nacionalidad> iterableNacionalidad = session.query(Nacionalidad.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Nacionalidad> iteradorNacionalidad = iterableNacionalidad.iterator();
+            while (iteradorNacionalidad.hasNext()) {
+                Nacionalidad nac = iteradorNacionalidad.next();
+                textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + nac.getId() + "\" source=\"" + nac.getOrigen().getId() + "\" target=\"" + nac.getDestino().getId() + "\" /> \n";
+                x = x + 1;
+            }
         }
-
-        consulta = " MATCH p=(i:investigador)-[r:edad]->() " + filtro + " RETURN p";
-        System.out.println(consulta);
-        session.clear();
-        Iterable<Edad> iterableEdad = session.query(Edad.class, consulta, Collections.<String, Object>emptyMap());
-        Iterator<Edad> iteradorEdad = iterableEdad.iterator();
-        while (iteradorEdad.hasNext()) {
-            Edad e = iteradorEdad.next();
-            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + e.getId() + "\" source=\"" + e.getOrigen().getId() + "\" target=\"" + e.getDestino().getId() + "\" /> \n";
-            x = x + 1;
+        if (filtroRelacion.contains("edad") || filtroRelacion.equals("")){   
+            consulta = " MATCH p=(i:investigador)-[r:edad]->() " + filtro + " RETURN p";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Edad> iterableEdad = session.query(Edad.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Edad> iteradorEdad = iterableEdad.iterator();
+            while (iteradorEdad.hasNext()) {
+                Edad e = iteradorEdad.next();
+                textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + e.getId() + "\" source=\"" + e.getOrigen().getId() + "\" target=\"" + e.getDestino().getId() + "\" /> \n";
+                x = x + 1;
+            }
         }
-
-        consulta = " MATCH p=(i:investigador)-[r:resideen]->() " + filtro + " RETURN p";
-        System.out.println(consulta);
-        session.clear();
-        Iterable<Resideen> iterableReside = session.query(Resideen.class, consulta, Collections.<String, Object>emptyMap());
-        Iterator<Resideen> iteradorReside = iterableReside.iterator();
-        while (iteradorReside.hasNext()) {
-            Resideen re = iteradorReside.next();
-            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + re.getId() + "\" source=\"" + re.getOrigen().getId() + "\" target=\"" + re.getDestino().getId() + "\" /> \n";
-            x = x + 1;
+        if (filtroRelacion.contains("resideen") || filtroRelacion.equals("")){   
+            consulta = " MATCH p=(i:investigador)-[r:resideen]->() " + filtro + " RETURN p";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Resideen> iterableReside = session.query(Resideen.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Resideen> iteradorReside = iterableReside.iterator();
+            while (iteradorReside.hasNext()) {
+                Resideen re = iteradorReside.next();
+                textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + re.getId() + "\" source=\"" + re.getOrigen().getId() + "\" target=\"" + re.getDestino().getId() + "\" /> \n";
+                x = x + 1;
+            }
         }
-
-        consulta = " MATCH p=(i:investigador)-[r:tienecomodisciplina]->() " + filtro + " RETURN p";
-        System.out.println(consulta);
-        session.clear();
-        Iterable<Tienecomodisciplina> iterableDisciplina = session.query(Tienecomodisciplina.class, consulta, Collections.<String, Object>emptyMap());
-        Iterator<Tienecomodisciplina> iteradorDisciplina = iterableDisciplina.iterator();
-        while (iteradorDisciplina.hasNext()) {
-            Tienecomodisciplina d = iteradorDisciplina.next();
-            textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + d.getId() + "\" source=\"" + d.getOrigen().getId() + "\" target=\"" + d.getDestino().getId() + "\" /> \n";
-            x = x + 1;
+        if (filtroRelacion.contains("tienecomodisciplina") || filtroRelacion.equals("")){   
+            consulta = " MATCH p=(i:investigador)-[r:tienecomodisciplina]->() " + filtro + " RETURN p";
+            System.out.println(consulta);
+            session.clear();
+            Iterable<Tienecomodisciplina> iterableDisciplina = session.query(Tienecomodisciplina.class, consulta, Collections.<String, Object>emptyMap());
+            Iterator<Tienecomodisciplina> iteradorDisciplina = iterableDisciplina.iterator();
+            while (iteradorDisciplina.hasNext()) {
+                Tienecomodisciplina d = iteradorDisciplina.next();
+                textoxmlEnlaces = textoxmlEnlaces + "<edge id=\"" + d.getId() + "\" source=\"" + d.getOrigen().getId() + "\" target=\"" + d.getDestino().getId() + "\" /> \n";
+                x = x + 1;
+            }
         }
-        textoXML = "<nodes count=\"" + n + "\"> \n " + textoXML + "</nodes>";
+        textoXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+"<gexf xmlns=\"http://www.gexf.net/1.3\" version=\"1.3\" xmlns:viz=\"http://www.gexf.net/1.3/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.3 http://www.gexf.net/1.3/gexf.xsd\">\n" +
+"  <meta lastmodifieddate=\"2017-04-18\">\n" +
+"    <creator>Gephi 0.9</creator>\n" +
+"    <description></description>\n" +
+"  </meta>\n" +
+"  <graph defaultedgetype=\"undirected\" mode=\"static\">\n" +
+"    <attributes class=\"node\" mode=\"static\">\n" +
+"      <attribute id=\"tipo\" title=\"tipo\" type=\"string\"></attribute>\n" +
+"    </attributes>\n"
+                +"<nodes count=\"" + n + "\"> \n " + textoXML + "</nodes>";
         textoxmlEnlaces = "<edges count=\"" + x + "\"> \n " + textoxmlEnlaces + "</edges>";
-        System.out.println(textoxmlEnlaces);
-        Escritor.escribir(textoXML + "\n" + textoxmlEnlaces, "C:\\Users\\Edu\\Desktop\\Tesis\\nodos.xml");
+        String resultado=textoXML + "\n" + textoxmlEnlaces+"</graph></gexf>";
+        Escritor.escribir(resultado, "C:\\Users\\Edu\\Desktop\\Tesis\\nodos.gexf");
+        return resultado;
+        
     }
 
     /**
@@ -626,6 +690,8 @@ public class ventanaInicio extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboPropiedad;
     private javax.swing.JComboBox<String> jComboRelacion;
     private javax.swing.JComboBox<String> jComboValor;

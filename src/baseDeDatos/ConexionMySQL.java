@@ -36,15 +36,11 @@ public boolean crearConexion(String usuario, String pass)
    try {
       Class.forName("com.mysql.jdbc.Driver");
       conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/tesis",usuario,pass);
-     //conexion = DriverManager.getConnection("jdbc:mysql://10.10.2.3/sistemacefas",usuario,pass);
-      System.out.println("va a devolver true");
        return true;
    } catch (SQLException ex) {
-      System.out.println("primer catch");
       ex.printStackTrace();
       return false;
    } catch (ClassNotFoundException ex) {
-       System.out.println("segundo catch");
       ex.printStackTrace();
       return false;
    }
